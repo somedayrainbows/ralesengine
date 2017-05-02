@@ -16,6 +16,15 @@ namespace :data do
       puts "Merchant #{merchant.name} created."
     end
 
+    CSV.foreach('./db/data/customers.csv', headers: true) do |row|
+      customer = Customer.create(first_name: row['first_name'],
+                                 last_name: row['last_name'],
+                                 created_at: row['created_at'],
+                                 updated_at: row['updated_at'])
+
+      puts "Customer #{customer.first_name} #{customer.last_name} created."
+    end
+
     CSV.foreach('./db/data/invoices.csv', headers: true) do |row|
       invoice = Invoice.create(status: row['status'],
                                created_at: row['created_at'],
