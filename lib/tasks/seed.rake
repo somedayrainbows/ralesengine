@@ -11,6 +11,7 @@ namespace :seed do
     Rake::Task["seed:invoices"].invoke
     Rake::Task["seed:transactions"].invoke
     Rake::Task["seed:items"].invoke
+    Rake::Task["seed:invoice_items"].invoke
   end
 
   desc "import merchant csv data"
