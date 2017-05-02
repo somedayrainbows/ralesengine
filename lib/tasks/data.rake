@@ -50,5 +50,12 @@ namespace :data do
                          updated_at: row['updated_at'])
       puts "Item #{item.id}: #{item.name} created."
     end
+
+    CSV.foreach('./db/data/invoice_items.csv', headers: true) do |row|
+      invoice_item = InvoiceItem.create(quantity: row['quantity'],
+                                        unit_price: ['unit_price'],
+                                        created_at: row[:created_at], updated_at: row[:updated_at])
+      puts "Invoice Item #{invoice_item.id} created."
+    end
   end
 end
