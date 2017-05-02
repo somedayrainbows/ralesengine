@@ -76,4 +76,14 @@ namespace :seed do
     end
   end
 
+  desc "import invoice_item csv data"
+  task invoice_items: :environment do
+    CSV.foreach('./db/data/invoice_items.csv', headers: true) do |row|
+      invoice_item = InvoiceItem.create(quantity: row['quantity'],
+                                        unit_price: row['unit_price'],
+                                        created_at: row['created_at'],
+                                        updated_at: row['updated_at'])
+      puts "Invoice Item #{invoice_item.id} created."
+    end
+  end
 end
