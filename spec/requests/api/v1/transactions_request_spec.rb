@@ -2,7 +2,6 @@ require 'rails_helper'
 
 describe "Transactions API" do
   it "sends a list of transactions" do
-    # create_list(:transaction, 3)
 
     invoice = Invoice.create(status: 'Paid')
     create_list(:transaction, 3, invoice: invoice)
@@ -19,7 +18,9 @@ describe "Transactions API" do
   end
 
   it "can get one transaction by its id" do
-    invoice = Invoice.create(status: 'Paid')
+    merchant = create(:merchant)
+    customer = create(:customer)
+    invoice = Invoice.create!(status: 'Paid', merchant: merchant, customer: customer)
     transaction = create_list(:transaction, 3, invoice: invoice).first
     id = transaction.id
 
