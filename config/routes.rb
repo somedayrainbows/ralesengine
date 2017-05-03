@@ -3,9 +3,9 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       resources :merchants, only: [:index, :show]
-      namespace :merchants do
-        get '/:id/items', to: 'items#index', as: 'items'
-        get '/:id/invoices', to: 'invoices#index', as: 'invoices'
+      namespace :merchants, only: [:index, :show] do
+        get '/:id/items', to: 'items#index', as: 'merchant_items'
+        get '/:id/invoices', to: 'invoices#index', as: 'merchant_invoices'
       end
       resources :invoices, only: [:index, :show]
       namespace :invoices do
@@ -18,6 +18,10 @@ Rails.application.routes.draw do
       resources :transactions, only: [:index, :show]
       resources :customers, only: [:index, :show]
       resources :items, only: [:index, :show]
+      namespace :items do
+        get '/:id/invoice_items', to: 'invoice_items#index', as: 'item_invoice_items'
+        get '/:id/merchant', to: 'merchants#show', as: 'item_merchant'
+      end
       resources :invoice_items, only: [:index, :show]
       namespace :invoice_items do
         get '/:id/invoice', to: 'invoices#show', as: 'invoice'

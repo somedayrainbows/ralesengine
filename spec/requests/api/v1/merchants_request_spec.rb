@@ -25,7 +25,7 @@ describe "Merchants API" do
     expect(merchant["id"]).to eq(id)
   end
 
-  it "returns a collection of items associated with that merchant" do # GET /api/v1/merchants/:id/items
+  it "returns a collection of items associated with that merchant" do
     merchant1 = create(:merchant)
     merchant2 = create(:merchant)
     items1 = create_list(:item, 3, merchant: merchant1)
@@ -41,7 +41,7 @@ describe "Merchants API" do
     expect(items.first["name"]).to eq(items1.first.name)
   end
 
-  it "returns a collection of invoices associated with that merchant from their known orders" do # GET /api/v1/merchants/:id/invoices
+  it "returns a collection of invoices associated with that merchant from their known orders" do
     merchant1 = create(:merchant)
     merchant2 = create(:merchant)
     customer = create(:customer)
