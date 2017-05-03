@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe "Items API" do
   it "sends a list of items" do
-    merchant = Merchant.create(name: 'Lady Jane')
+    merchant = Merchant.create!(name: 'Lady Jane')
     items = create_list(:item, 3, merchant: merchant)
 
     get '/api/v1/items'
@@ -15,7 +15,7 @@ describe "Items API" do
   end
 
   it "can get one item by its id" do
-    merchant = Merchant.create(name: 'Lady Jane')
+    merchant = Merchant.create!(name: 'Lady Jane')
     item = create_list(:item, 3, merchant: merchant).first
     id = item.id
 
