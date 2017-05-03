@@ -19,8 +19,8 @@ namespace :seed do
     DatabaseCleaner.clean_with(:truncation, only: ["merchants"])
     CSV.foreach('./db/data/merchants.csv', headers: true) do |row|
       merchant = Merchant.create!(name: row['name'],
-                                 created_at: row['created_at'],
-                                 updated_at: row['updated_at'])
+                                  created_at: row['created_at'],
+                                  updated_at: row['updated_at'])
 
       puts "Merchant #{merchant.name} created."
     end
@@ -31,9 +31,9 @@ namespace :seed do
     DatabaseCleaner.clean_with(:truncation, only: ["customers"])
     CSV.foreach('./db/data/customers.csv', headers: true) do |row|
       customer = Customer.create!(first_name: row['first_name'],
-                                 last_name: row['last_name'],
-                                 created_at: row['created_at'],
-                                 updated_at: row['updated_at'])
+                                  last_name: row['last_name'],
+                                  created_at: row['created_at'],
+                                  updated_at: row['updated_at'])
 
       puts "Customer #{customer.first_name} #{customer.last_name} created."
     end
@@ -43,9 +43,13 @@ namespace :seed do
   task invoices: :environment do
     DatabaseCleaner.clean_with(:truncation, only: ["invoices"])
     CSV.foreach('./db/data/invoices.csv', headers: true) do |row|
+      # merchant = Merchant.create!(name: "Sally O'Malley")
+      # customer = Customer.create!(first_name: "Leah", last_name: "Stavos")
       invoice = Invoice.create!(status: row['status'],
-                               created_at: row['created_at'],
-                               updated_at: row['updated_at'])
+                                customer_id: row['customer_id'],
+                                merchant_id: row['merchant_id'],
+                                created_at: row['created_at'],
+                                updated_at: row['updated_at'])
       puts "Invoice #{invoice.id} created."
     end
   end
@@ -55,10 +59,11 @@ namespace :seed do
     DatabaseCleaner.clean_with(:truncation, only: ["transactions"])
     CSV.foreach('./db/data/transactions.csv', headers: true) do |row|
       transaction = Transaction
-                    .create!(credit_card_number: row['credit_card_number'],
-                            result: row['result'],
-                            created_at: row['created_at'],
-                            updated_at: row['updated_at'])
+                    .create!(invoice_id: row['invoice_id'],
+                             credit_card_number: row['credit_card_number'],
+                             result: row['result'],
+                             created_at: row['created_at'],
+                             updated_at: row['updated_at'])
       puts "Transaction #{transaction.id} with cc# "\
            "#{transaction.credit_card_number} created."
     end
@@ -69,10 +74,11 @@ namespace :seed do
     DatabaseCleaner.clean_with(:truncation, only: ["items"])
     CSV.foreach('./db/data/items.csv', headers: true) do |row|
       item = Item.create!(name: row['name'],
-                         description: row['description'],
-                         unit_price: row['unit_price'],
-                         created_at: row['created_at'],
-                         updated_at: row['updated_at'])
+                          description: row['description'],
+                          unit_price: row['unit_price'],
+                          merchant_id: row['merchant_id'],
+                          created_at: row['created_at'],
+                          updated_at: row['updated_at'])
       puts "Item #{item.id}: #{item.name} created."
     end
   end
@@ -80,10 +86,12 @@ namespace :seed do
   desc "import invoice_item csv data"
   task invoice_items: :environment do
     CSV.foreach('./db/data/invoice_items.csv', headers: true) do |row|
-      invoice_item = InvoiceItem.create!(quantity: row['quantity'],
-                                        unit_price: row['unit_price'],
-                                        created_at: row['created_at'],
-                                        updated_at: row['updated_at'])
+      invoice_item = InvoiceItem.create!(item_id: row['item_id'],
+                                         invoice_id: row['invoice_id'],
+                                         quantity: row['quantity'],
+                                         unit_price: row['unit_price'],
+                                         created_at: row['created_at'],
+                                         updated_at: row['updated_at'])
       puts "Invoice Item #{invoice_item.id} created."
     end
   end
