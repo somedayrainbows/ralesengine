@@ -2,7 +2,9 @@ require 'rails_helper'
 
 describe "Invoice items API" do
   it "sends a list of invoice items" do
-    create_list(:invoice_item, 3)
+    item = Item.create(name: "Hockey puck", description: "lorem ipsum", unit_price: 23)
+    invoice = Invoice.create(status: "Paid")
+    create_list(:invoice_item, 3, item: item, invoice: invoice)
 
     get '/api/v1/invoice_items'
 
@@ -14,7 +16,10 @@ describe "Invoice items API" do
   end
 
   it "can get one invoice item by its id" do
-    id = create(:invoice_item).id
+    item = Item.create(name: "Hockey puck", description: "lorem ipsum", unit_price: 23)
+    invoice = Invoice.create(status: "Paid")
+    item = create_list(:invoice_item, 3, item: item, invoice: invoice).first
+    id = item.id
 
     get "/api/v1/invoice_items/#{id}"
 
