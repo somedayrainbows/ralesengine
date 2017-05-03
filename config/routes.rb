@@ -3,6 +3,10 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       resources :merchants, only: [:index, :show]
+      namespace :merchants, only: [:index, :show] do
+        get '/:id/items', to: 'items#index', as: 'api_v1_merchant_items'
+        get '/:id/invoices', to: 'invoices#index', as: 'api_v1_merchant_invoices'
+      end
       resources :invoices, only: [:index, :show]
       resources :transactions, only: [:index, :show]
       resources :customers, only: [:index, :show]

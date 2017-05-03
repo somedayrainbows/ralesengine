@@ -8,8 +8,8 @@ RSpec.describe Merchant, type: :model do
 
   it "returns a single merchant based on any merchant attributes and is case insensitive" do #single finder for /find?name=params  -id, name, created_at, updated_at
     merchant = create(:merchant)
-
   end
+
 
   it "returns all merchants based on any merchant attributes and is case insensitive" do # multi-finder for /find_all?name=params  -id, name, created_at, updated_at
     merchant1 = Merchant.create!(name: "Jack Black")
@@ -21,10 +21,12 @@ RSpec.describe Merchant, type: :model do
   end
 
   it "it returns customers with pending invoices for a single merchant" do
-    merchant = create(:merchant)
-    invoices = create_list(:invoice, 5)
-    invoice.first.update_attributes(status: "Pending")
-    invoice.last.update_attributes(status: "Pending")
+    merchant1 = create(:merchant)
+    customer = create(:customer)
+    merchant2 = create(:merchant)
+    invoices = create_list(:invoice, 5, merchant: merchant1, customer: customer)
+    invoices.first.update_attributes(status: "Pending")
+    invoices.last.update_attributes(status: "Pending")
 
   end
 end

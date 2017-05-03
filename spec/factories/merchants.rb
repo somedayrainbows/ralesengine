@@ -3,7 +3,7 @@ FactoryGirl.define do
     sequence :name do |n|
       "Merchant #{n}"
       invoices { [association(:invoice)] }
-      items { [association(:invoice)] }
+      items { [association(:item)] }
     end
   end
 end
