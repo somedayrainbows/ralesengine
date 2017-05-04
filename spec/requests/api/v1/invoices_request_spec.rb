@@ -121,3 +121,123 @@ describe "Invoices API" do
     expect(merchant["name"]).to eq(merchant1.name)
   end
 end
+
+describe 'find endpoints'do
+  before :each do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    create(:invoice, status: "Pending", merchant: merchant, customer: customer)
+    @invoice = create(:invoice, status: "Shipped", merchant: merchant, customer: customer)
+  end
+
+  it "returns a single invoice based on an id" do
+    get "/api/v1/invoices/find?id=#{@invoice.id}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint['status']).to eq(@invoice.status)
+  end
+
+  it "returns a single invoice based on a status" do
+    get "/api/v1/invoices/find?status=#{@invoice.status}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint['status']).to eq(@invoice.status)
+  end
+
+  it "returns a single invoice based on a created date" do
+    get "/api/v1/invoices/find?created_at=#{@invoice.created_at}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint['status']).to eq(@invoice.status)
+  end
+
+  it "returns a single invoice based on updated date" do
+    get "/api/v1/invoices/find?updated_at=#{@invoice.updated_at}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint['status']).to eq(@invoice.status)
+  end
+end
+
+describe 'find_all endpoints' do
+  before :each do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    @invoice1 = Invoice.create!(status: "Shipped",
+                                merchant: merchant,
+                                customer: customer,
+                                created_at: "2000-03-27 14:53:59 UTC",
+                                updated_at: "2009-03-27 14:53:59 UTC")
+    @invoice2 = Invoice.create!(status: "Paid",
+                                merchant: merchant,
+                                customer: customer,
+                                created_at: "2003-03-27 14:53:59 UTC",
+                                updated_at: "2005-03-27 14:53:59 UTC")
+    @invoice3 = Invoice.create!(status: "Pending",
+                                merchant: merchant,
+                                customer: customer,
+                                created_at: "2004-03-27 14:53:59 UTC",
+                                updated_at: "2005-03-27 14:53:59 UTC")
+    @invoice4 = Invoice.create!(status: "Paid",
+                                merchant: merchant,
+                                customer: customer,
+                                created_at: "2000-03-27 14:53:59 UTC",
+                                updated_at: "2032-03-27 14:53:59 UTC")
+  end
+
+  it "returns a collection of invoices based on an id" do
+    get "/api/v1/invoices/find_all?id=#{@invoice1.id}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint.first['status']).to eq(@invoice1.status)
+  end
+
+  it "returns a collection of invoices based on a status" do
+    get "/api/v1/invoices/find_all?status=#{@invoice1.status}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint.count).to eq(1)
+    expect(invoice_endpoint.first['status']).to eq(@invoice1.status)
+  end
+
+  it "returns a collection of invoices based on a created date" do
+    get "/api/v1/invoices/find_all?created_at=#{@invoice1.created_at}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint.count).to eq(2)
+    expect(invoice_endpoint.first['status']).to eq(@invoice1.status)
+    expect(invoice_endpoint.last['status']).to eq(@invoice4.status)
+  end
+
+  it "returns a collection of invoices based on updated date" do
+    get "/api/v1/invoices/find_all?updated_at=#{@invoice2.updated_at}"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(invoice_endpoint.count).to eq(2)
+    expect(invoice_endpoint.first['status']).to eq(@invoice2.status)
+    expect(invoice_endpoint.last['status']).to eq(@invoice3.status)
+  end
+end
+
+describe 'find random' do
+  it "returns a random invoice" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    invoice1 = create(:invoice, status: "Pending", merchant: merchant, customer: customer)
+    invoice2 = create(:invoice, status: "Shipped", merchant: merchant, customer: customer)
+
+    get "/api/v1/invoices/random"
+
+    invoice_endpoint = JSON.parse(response.body)
+
+    expect(response).to be_success
+  end
+end
