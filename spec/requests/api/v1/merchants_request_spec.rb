@@ -179,5 +179,28 @@ describe "Merchants API" do
       expect(response).to be_success
       expect(merchant_endpoint).to eq({"revenue"=>"95.0"})
     end
+
+    it "returns a collection of customers that have pending (unpaid) invoices" do
+      customers = create_list(:customer, 4)
+      merchant = create(:merchant)
+      invoice1 = create(:invoice, customer: customers.first, merchant: merchant)
+      invoice2 = create(:invoice, customer: customers.second, merchant: merchant)
+      invoice3 = create(:invoice, customer: customers.third, merchant: merchant)
+      invoice4 = create(:invoice, customer: customers.last, merchant: merchant)
+      transaction1 = create(:transaction, invoice: invoice1, result: "failed")
+      transaction2 = create(:transaction, invoice: invoice2, result: "failed")
+      transaction3 = create(:transaction, invoice: invoice3, result: "failed")
+      transaction4 = create(:transaction, invoice: invoice4, result: "failed")
+      id = merchant.id
+
+      get "/api/v1/merchants/#{id}/customers_with_pending_invoices"
+
+      merchant_endpoint = JSON.parse(response.body)
+
+      expect(response).to be_success
+      expect(merchant_endpoint.count).to eq(4)
+      expect(merchant_endpoint.first.name).to eq(customers.first.name)
+
+    end
   end
 end
