@@ -1,5 +1,10 @@
 class ApplicationController < ActionController::API
   def param_finder
-    find = params.permit(:id, :name, :created_at, :updated_at)
+    params.permit(:id,
+                  :name,
+                  :credit_card_number,
+                  :result,
+                  :created_at,
+                  :updated_at)
   end
 end

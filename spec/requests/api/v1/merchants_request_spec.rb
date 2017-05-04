@@ -58,7 +58,7 @@ describe "Merchants API" do
     expect(invoices.first["status"]).to eq(invoices1.first.status)
   end
 
-  describe 'find endpoints'do
+  describe 'find endpoints' do
     before :each do
       create(:merchant, name: 'Sallys Seashells')
       @merchant = create(:merchant, name: 'Billy Bob Bacon')
