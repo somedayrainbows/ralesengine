@@ -4,6 +4,7 @@ class ApplicationController < ActionController::API
                   :name,
                   :credit_card_number,
                   :result,
+                  :status,
                   :created_at,
                   :updated_at)
   end
