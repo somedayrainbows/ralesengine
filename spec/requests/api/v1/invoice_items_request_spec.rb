@@ -32,4 +32,42 @@ describe "Invoice items API" do
     expect(response).to be_success
     expect(item["id"]).to eq(id)
   end
+
+  it "returns the invoice associated with an invoice item" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    item = create(:item, merchant: merchant)
+    invoice1 = create(:invoice, customer: customer, merchant: merchant)
+    invoice2 = create(:invoice, customer: customer, merchant: merchant)
+    invoice_item1 = InvoiceItem.create!(item: item, invoice: invoice1)
+    invoice_item2 = InvoiceItem.create!(item: item, invoice: invoice2)
+
+    id1 = invoice_item1.id
+
+    get "/api/v1/invoice_items/#{id1}/invoice"
+
+    invoice = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(invoice["id"]).to eq(invoice1.id)
+  end
+
+  it "returns the item associated with an invoice item" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    item1 = create(:item, merchant: merchant)
+    item2 = create(:item, merchant: merchant)
+    invoice = create(:invoice, customer: customer, merchant: merchant)
+    invoice_item1 = InvoiceItem.create!(item: item1, invoice: invoice)
+    invoice_item2 = InvoiceItem.create!(item: item2, invoice: invoice)
+
+    id1 = invoice_item1.id
+
+    get "/api/v1/invoice_items/#{id1}/item"
+
+    item = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(item["id"]).to eq(item1.id)
+  end
 end
