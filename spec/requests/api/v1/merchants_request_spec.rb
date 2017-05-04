@@ -162,4 +162,22 @@ describe "Merchants API" do
       expect(response).to be_success
     end
   end
+
+  describe 'business intelligence' do
+    it "returns the total revenue for a merchant" do
+      customer = create(:customer)
+      merchant = create(:merchant, name: 'Billy Bob Bacon')
+      invoice = create(:invoice, merchant: merchant, customer: customer)
+      items = create_list(:item, 2, merchant: merchant)
+      InvoiceItem.create(invoice: invoice, item: items.first, unit_price: 1000, quantity: 2)
+      InvoiceItem.create(invoice: invoice, item: items.second, unit_price: 2500, quantity: 3)
+      create(:transaction, invoice: invoice)
+
+      get "/api/v1/merchants/#{merchant.id}/revenue"
+      merchant_endpoint = JSON.parse(response.body)
+
+      expect(response).to be_success
+      expect(merchant_endpoint).to eq({"revenue"=>"95.0"})
+    end
+  end
 end
