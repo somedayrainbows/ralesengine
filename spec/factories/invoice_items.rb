@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :invoice_item do
-    sequence(:quantity) { |n| "#{n}" }
-    sequence(:unit_price) { |n| "#{n}" }
+    quantity 2
+    unit_price 1000
   end
 end

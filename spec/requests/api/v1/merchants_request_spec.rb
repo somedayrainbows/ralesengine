@@ -179,5 +179,80 @@ describe "Merchants API" do
       expect(response).to be_success
       expect(merchant_endpoint).to eq({"revenue"=>"95.0"})
     end
+
+    it "returns the total revenue for a merchant on a date" do
+      customer = create(:customer)
+      merchant = create(:merchant, name: 'Billy Bob Bacon')
+      invoice1 = create(:invoice, merchant: merchant, customer: customer, created_at: '2012-03-16 11:55:05')
+      invoice2 = create(:invoice, merchant: merchant, customer: customer, created_at: '2012-03-15 11:55:05')
+      items = create_list(:item, 2, merchant: merchant)
+      InvoiceItem.create(invoice: invoice1, item: items.first, unit_price: 1000, quantity: 2)
+      InvoiceItem.create(invoice: invoice2, item: items.second, unit_price: 2500, quantity: 3)
+      InvoiceItem.create(invoice: invoice2, item: items.second, unit_price: 2500, quantity: 3)
+      create(:transaction, invoice: invoice1)
+      create(:transaction, invoice: invoice2)
+
+      get "/api/v1/merchants/#{merchant.id}/revenue?date='2012-03-16 11:55:05'"
+      merchant_endpoint = JSON.parse(response.body)
+
+      expect(response).to be_success
+      expect(merchant_endpoint).to eq({"revenue"=>"20.0"})
+    end
+
+    it "returns the top x merchants ranked by total number of items sold" do
+      customer = create(:customer)
+      merchant1 = create(:merchant, name: 'Billy Bobs Bacon')
+      merchant2 = create(:merchant, name: 'Sallys Seashells')
+      merchant3 = create(:merchant, name: 'Andys Anchors')
+      merchant4 = create(:merchant, name: 'Dannys Dentures')
+      invoice1 = create(:invoice, merchant: merchant1, customer: customer)
+      invoice2 = create(:invoice, merchant: merchant2, customer: customer)
+      invoice3 = create(:invoice, merchant: merchant3, customer: customer)
+      invoice4 = create(:invoice, merchant: merchant4, customer: customer)
+      item1 = create(:item, merchant: merchant1)
+      item2 = create(:item, merchant: merchant2)
+      item3 = create(:item, merchant: merchant3)
+      item4 = create(:item, merchant: merchant4)
+      InvoiceItem.create(invoice: invoice1, item: item1, quantity: 10)
+      InvoiceItem.create(invoice: invoice2, item: item2, quantity: 30)
+      InvoiceItem.create(invoice: invoice3, item: item3, quantity: 40)
+      InvoiceItem.create(invoice: invoice4, item: item4, quantity: 20)
+      create(:transaction, invoice: invoice1)
+      create(:transaction, invoice: invoice2)
+      create(:transaction, invoice: invoice3)
+      create(:transaction, invoice: invoice4)
+
+      get "/api/v1/merchants/most_items?quantity=3"
+      merchant_endpoint = JSON.parse(response.body)
+
+      expect(response).to be_success
+      expect(merchant_endpoint.count).to eq(3)
+      expect(merchant_endpoint.first['name']).to eq(merchant3.name)
+      expect(merchant_endpoint.second['name']).to eq(merchant2.name)
+      expect(merchant_endpoint.third['name']).to eq(merchant4.name)
+      expect(merchant_endpoint.first['items_sold']).to eq(40)
+      expect(merchant_endpoint.second['items_sold']).to eq(30)
+      expect(merchant_endpoint.third['items_sold']).to eq(20)
+    end
+
+    it "returns a collection of customers that have pending (unpaid) invoices" do
+      customers = create_list(:customer, 2)
+      merchant = create(:merchant)
+      invoice1 = create(:invoice, customer: customers.first, merchant: merchant)
+      invoice2 = create(:invoice, customer: customers.last, merchant: merchant)
+      transaction1 = create(:transaction, invoice: invoice1, result: "failed")
+      transaction2 = create(:transaction, invoice: invoice1, result: "success")
+      transaction3 = create(:transaction, invoice: invoice2, result: "failed")
+      transaction4 = create(:transaction, invoice: invoice2, result: "failed")
+      id = merchant.id
+
+      get "/api/v1/merchants/#{id}/customers_with_pending_invoices"
+
+      merchant_endpoint = JSON.parse(response.body)
+      
+      expect(response).to be_success
+      expect(merchant_endpoint.count).to eq(1)
+      expect(merchant_endpoint.first["first_name"]).to eq(customers.last.first_name)
+    end
   end
 end

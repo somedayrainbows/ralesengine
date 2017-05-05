@@ -45,3 +45,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # Added gems
 gem 'active_model_serializers'
 gem 'database_cleaner'
+gem 'awesome_print', require: 'ap'

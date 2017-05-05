@@ -6,13 +6,27 @@ RSpec.describe Merchant, type: :model do
     it { should have_many(:items) }
   end
 
-  it "it returns customers with pending invoices for a single merchant" do
-    merchant1 = create(:merchant)
+  it "returns revenue for a merchant" do
     customer = create(:customer)
-    merchant2 = create(:merchant)
-    invoices = create_list(:invoice, 5, merchant: merchant1, customer: customer)
-    invoices.first.update_attributes(status: "Pending")
-    invoices.last.update_attributes(status: "Pending")
+    merchant = create(:merchant, name: 'Billy Bob Bacon')
+    invoice = create(:invoice, merchant: merchant, customer: customer)
+    items = create_list(:item, 2, merchant: merchant)
+    InvoiceItem.create(invoice: invoice, item: items.first, unit_price: 1000, quantity: 2)
+    InvoiceItem.create(invoice: invoice, item: items.second, unit_price: 2500, quantity: 3)
+    create(:transaction, invoice: invoice)
 
+    expect(Merchant.find(merchant.id).revenue).to eq("95.0")
+  end
+
+  it "returns revenue for a merchant" do
+    customer = create(:customer)
+    merchant = create(:merchant, name: 'Billy Bob Bacon')
+    invoice = create(:invoice, merchant: merchant, customer: customer)
+    items = create_list(:item, 2, merchant: merchant)
+    InvoiceItem.create(invoice: invoice, item: items.first, unit_price: 1000, quantity: 2)
+    InvoiceItem.create(invoice: invoice, item: items.second, unit_price: 2500, quantity: 3)
+    create(:transaction, invoice: invoice)
+
+    expect(Merchant.find(merchant.id).revenue).to eq("95.0")
   end
 end

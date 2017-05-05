@@ -9,6 +9,8 @@ Rails.application.routes.draw do
         get 'find_all', to: 'finder#index'
         get 'random', to: 'random#show'
         get '/:id/revenue', to: 'revenue#show'
+        get 'most_items', to: 'most_items#index'
+        get '/:id/customers_with_pending_invoices', to: 'customers#index'
       end
       resources :merchants, only: [:index, :show]
       namespace :invoices do
