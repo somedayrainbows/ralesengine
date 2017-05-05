@@ -90,8 +90,8 @@ describe "Items API" do
       expect(item_endpoint['id']).to eq(@item.id)
     end
 
-    it "returns a single item based on a name" do
-      get "/api/v1/items/find?unit_price=#{@item.unit_price}"
+    it "returns a single item based on a unit price" do
+      get "/api/v1/items/find?unit_price=#{@item.unit_price.to_f/100}"
 
       item_endpoint = JSON.parse(response.body)
 
@@ -162,7 +162,7 @@ describe "Items API" do
     end
 
     it "returns a collection of items based on a unit_price" do
-      get "/api/v1/items/find_all?unit_price=#{@item1.unit_price}"
+      get "/api/v1/items/find_all?unit_price=#{@item1.unit_price.to_f/100}"
 
       item_endpoint = JSON.parse(response.body)
 
