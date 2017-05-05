@@ -89,3 +89,96 @@ describe "Customers API" do
     expect(endpoint_merchant["name"]).to eq(merchant3.name)
   end
 end
+
+describe 'find endpoints'do
+  before :each do
+    @customer1 = create(:customer)
+    @customer2 = create(:customer)
+  end
+
+  it "returns a single customer based on an id" do
+    get "/api/v1/customers/find?id=#{@customer1.id}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint['first_name']).to eq(@customer1.first_name)
+  end
+
+  it "returns a single customer based on a first_name" do
+    get "/api/v1/customers/find?first_name=#{@customer1.first_name}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint['first_name']).to eq(@customer1.first_name)
+  end
+
+  it "returns a single customer based on a created date" do
+    get "/api/v1/customers/find?created_at=#{@customer1.created_at}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint['first_name']).to eq(@customer1.first_name)
+  end
+
+  it "returns a single customer based on updated date" do
+    get "/api/v1/customers/find?updated_at=#{@customer1.updated_at}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint['first_name']).to eq(@customer1.first_name)
+  end
+end
+
+describe 'find_all endpoints' do
+  before :each do
+    @customer1 = create(:customer)
+    @customer2 = create(:customer)
+  end
+
+  it "returns a collection of customers based on an id" do
+    get "/api/v1/customers/find_all?id=#{@customer1.id}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint.first['first_name']).to eq(@customer1.first_name)
+  end
+
+  it "returns a collection of customers based on a first_name" do
+    get "/api/v1/customers/find_all?first_name=#{@customer1.first_name}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint.count).to eq(1)
+    expect(customer_endpoint.first['first_name']).to eq(@customer1.first_name)
+  end
+
+  it "returns a collection of customers based on a created date" do
+    get "/api/v1/customers/find_all?created_at=#{@customer1.created_at}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint.count).to eq(1)
+    expect(customer_endpoint.first['first_name']).to eq(@customer1.first_name)
+  end
+
+  it "returns a collection of customers based on updated date" do
+    get "/api/v1/customers/find_all?updated_at=#{@customer1.updated_at}"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(customer_endpoint.count).to eq(1)
+    expect(customer_endpoint.first['first_name']).to eq(@customer1.first_name)
+  end
+end
+
+describe 'find random' do
+  it "returns a random customer" do
+    customer = create(:customer)
+
+    get "/api/v1/customers/random"
+
+    customer_endpoint = JSON.parse(response.body)
+
+    expect(response).to be_success
+  end
+end
