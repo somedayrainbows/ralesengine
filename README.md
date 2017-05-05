@@ -45,9 +45,9 @@ There are six tables of data in this project: merchants, customers, items, invoi
     `GET /api/v1/items/`
     `GET /api/v1/items/1`
 
-  * items
-    `GET /api/v1/items/`
-    `GET /api/v1/items/1`
+  * invoices
+    `GET /api/v1/invoices/`
+    `GET /api/v1/invoices/1`
 
   * invoice_items
     `GET /api/v1/invoice_items/`
