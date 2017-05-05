@@ -13,7 +13,7 @@ Go to your terminal, then:
   * Bundle install the necessary gems by typing `bundle`.
   * Run `rake db:create` to create the database.
   * Then, run, `rake db:migrate` to set up the database according to our schema.
-  * Finally, run `rake data:import` to load the seed data into the database.
+  * Finally, run `rake seed:all` to load the seed data into the database.
 
 ### RSpec test suite and Checking Coverage with SimpleCov
 
