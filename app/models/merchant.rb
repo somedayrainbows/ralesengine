@@ -34,4 +34,9 @@ class Merchant < ApplicationRecord
 
     invoices.map { |invoice| Customer.find(invoice.customer_id) }.uniq
   end
+
+  def self.most_revenue(limit = 5)
+    select("merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) AS revenue").joins(invoices: [:invoice_items, :transactions]).where(transactions: {result: 'success'}).group(:id).order('revenue DESC').limit(limit)
+  end
+
 end

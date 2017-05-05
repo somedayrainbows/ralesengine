@@ -249,10 +249,41 @@ describe "Merchants API" do
       get "/api/v1/merchants/#{id}/customers_with_pending_invoices"
 
       merchant_endpoint = JSON.parse(response.body)
-      
+
       expect(response).to be_success
       expect(merchant_endpoint.count).to eq(1)
       expect(merchant_endpoint.first["first_name"]).to eq(customers.last.first_name)
+    end
+
+    it "returns the top x merchants ranked by total revenue" do
+      customer = create(:customer)
+      merchant1 = create(:merchant, name: 'Erins Hats')
+      merchant2 = create(:merchant, name: 'Sallys Hamburgers')
+      merchant3 = create(:merchant, name: 'Andys Halibut Hell')
+      merchant4 = create(:merchant, name: 'Dannys Henchmen')
+      invoice1 = create(:invoice, merchant: merchant1, customer: customer)
+      invoice2 = create(:invoice, merchant: merchant2, customer: customer)
+      invoice3 = create(:invoice, merchant: merchant3, customer: customer)
+      invoice4 = create(:invoice, merchant: merchant4, customer: customer)
+      item = create(:item, merchant: merchant1)
+      InvoiceItem.create!(invoice: invoice1, item: item, quantity: 5, unit_price: 345)
+      InvoiceItem.create!(invoice: invoice2, item: item, quantity: 10, unit_price: 345)
+      InvoiceItem.create!(invoice: invoice3, item: item, quantity: 45, unit_price: 345)
+      InvoiceItem.create!(invoice: invoice4, item: item, quantity: 2, unit_price: 345)
+      create(:transaction, invoice: invoice1)
+      create(:transaction, invoice: invoice2)
+      create(:transaction, invoice: invoice3)
+      create(:transaction, invoice: invoice4)
+
+      get "/api/v1/merchants/most_revenue?quantity=4"
+
+      merchant_endpoint = JSON.parse(response.body)
+
+      expect(response).to be_success
+      expect(merchant_endpoint.count).to eq(4)
+      expect(merchant_endpoint.first['name']).to eq(merchant3.name)
+      expect(merchant_endpoint.second['name']).to eq(merchant2.name)
+      expect(merchant_endpoint.third['name']).to eq(merchant1.name)
     end
   end
 end
