@@ -4,6 +4,8 @@ class ApplicationController < ActionController::API
                   :name,
                   :first_name,
                   :last_name,
+                  :description,
+                  :unit_price,
                   :credit_card_number,
                   :result,
                   :status,
