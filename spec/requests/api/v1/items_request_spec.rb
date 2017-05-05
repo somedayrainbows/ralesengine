@@ -58,6 +58,162 @@ describe "Items API" do
     expect(items.first.merchant).to eq(merchant1)
     expect(items.first.merchant).to_not eq(merchant2)
   end
+
+  describe 'find endpoints' do
+    before :each do
+      merchant = create(:merchant)
+      create(:item, merchant: merchant, description: 'hi there')
+      @item = create(:item, merchant: merchant, description: 'oh hai')
+    end
+
+    it "returns a single item based on an id" do
+      get "/api/v1/items/find?id=#{@item.id}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint['id']).to eq(@item.id)
+    end
+
+    it "returns a single item based on a name" do
+      get "/api/v1/items/find?name=#{@item.name}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint['id']).to eq(@item.id)
+    end
+
+    it "returns a single item based on a description" do
+      get "/api/v1/items/find?description=#{@item.description}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint['id']).to eq(@item.id)
+    end
+
+    it "returns a single item based on a name" do
+      get "/api/v1/items/find?unit_price=#{@item.unit_price}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint['id']).to eq(@item.id)
+    end
+
+    it "returns a single item based on a created date" do
+      get "/api/v1/items/find?created_at=#{@item.created_at}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint['id']).to eq(@item.id)
+    end
+
+    it "returns a single item based on updated date" do
+      get "/api/v1/items/find?updated_at=#{@item.updated_at}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint['id']).to eq(@item.id)
+    end
+  end
+
+  describe 'find_all endpoints' do
+    before :each do
+      merchant = create(:merchant)
+      @item1 = Item.create!(name: 'table',
+                            unit_price: 100,
+                            description: 'hi',
+                            created_at: "2000-03-27 14:53:59 UTC",
+                            updated_at: "2009-03-27 14:53:59 UTC",
+                            merchant: merchant)
+      @item2 = Item.create!(name: 'table',
+                            unit_price: 100,
+                            description: 'hi',
+                            created_at: "2003-03-27 14:53:59 UTC",
+                            updated_at: "2005-03-27 14:53:59 UTC",
+                            merchant: merchant)
+      @item3 = Item.create!(name: 'chair',
+                            unit_price: 200,
+                            description: 'hello',
+                            created_at: "2004-03-27 14:53:59 UTC",
+                            updated_at: "2005-03-27 14:53:59 UTC",
+                            merchant: merchant)
+      @item4 = Item.create!(name: 'chair',
+                            unit_price: 200,
+                            description: 'hello',
+                            created_at: "2000-03-27 14:53:59 UTC",
+                            updated_at: "2032-03-27 14:53:59 UTC",
+                            merchant: merchant)
+    end
+
+    it "returns a collection of items based on an id" do
+      get "/api/v1/items/find_all?id=#{@item1.id}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint.first['id']).to eq(@item1.id)
+    end
+
+    it "returns a collection of items based on a name" do
+      get "/api/v1/items/find_all?name=#{@item1.name}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint.count).to eq(2)
+      expect(item_endpoint.first['id']).to eq(@item1.id)
+    end
+
+    it "returns a collection of items based on a unit_price" do
+      get "/api/v1/items/find_all?unit_price=#{@item1.unit_price}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint.count).to eq(2)
+      expect(item_endpoint.first['id']).to eq(@item1.id)
+    end
+
+    it "returns a collection of items based on a description" do
+      get "/api/v1/items/find_all?description=#{@item1.description}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint.count).to eq(2)
+      expect(item_endpoint.first['id']).to eq(@item1.id)
+    end
+
+    it "returns a collection of items based on a created date" do
+      get "/api/v1/items/find_all?created_at=#{@item1.created_at}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint.count).to eq(2)
+      expect(item_endpoint.first['id']).to eq(@item1.id)
+      expect(item_endpoint.last['id']).to eq(@item4.id)
+    end
+
+    it "returns a collection of items based on updated date" do
+      get "/api/v1/items/find_all?updated_at=#{@item2.updated_at}"
+
+      item_endpoint = JSON.parse(response.body)
+
+      expect(item_endpoint.count).to eq(2)
+      expect(item_endpoint.first['id']).to eq(@item2.id)
+      expect(item_endpoint.last['id']).to eq(@item3.id)
+    end
+  end
+
+  describe 'find random' do
+    it "returns a random item" do
+      merchant = create(:merchant)
+      create(:item, name: 'Seashell', merchant: merchant)
+      create(:item, name: 'Bacon', merchant: merchant)
+
+      get "/api/v1/items/random"
+
+      JSON.parse(response.body)
+
+      expect(response).to be_success
+    end
+  end
+
   describe "business intelligence"do
     it "returns an items best day" do
       customer1 = create(:customer)
