@@ -100,18 +100,19 @@ describe "Merchants API" do
   describe 'find_all endpoints' do
     before :each do
       @merchant1 = Merchant.create!(name: "Jack Black",
-                                   created_at: "2000-03-27 14:53:59 UTC",
-                                   updated_at: "2009-03-27 14:53:59 UTC")
+                                    created_at: "2000-03-27 14:53:59 UTC",
+                                    updated_at: "2009-03-27 14:53:59 UTC")
       @merchant2 = Merchant.create!(name: "Jack Black",
-                                   created_at: "2003-03-27 14:53:59 UTC",
-                                   updated_at: "2005-03-27 14:53:59 UTC")
+                                    created_at: "2003-03-27 14:53:59 UTC",
+                                    updated_at: "2005-03-27 14:53:59 UTC")
       @merchant3 = Merchant.create!(name: "Jack Velendez",
-                                   created_at: "2004-03-27 14:53:59 UTC",
-                                   updated_at: "2005-03-27 14:53:59 UTC")
+                                    created_at: "2004-03-27 14:53:59 UTC",
+                                    updated_at: "2005-03-27 14:53:59 UTC")
       @merchant4 = Merchant.create!(name: "Jane Sauro",
-                                   created_at: "2000-03-27 14:53:59 UTC",
-                                   updated_at: "2032-03-27 14:53:59 UTC")
+                                    created_at: "2000-03-27 14:53:59 UTC",
+                                    updated_at: "2032-03-27 14:53:59 UTC")
     end
+    
     it "returns a collection of merchants based on an id" do
       get "/api/v1/merchants/find_all?id=#{@merchant1.id}"
 
@@ -152,12 +153,12 @@ describe "Merchants API" do
 
   describe 'find random' do
     it "returns a random merchant" do
-      merchant1 = create(:merchant, name: 'Sallys Seashells')
-      merchant2 = create(:merchant, name: 'Billy Bob Bacon')
+      create(:merchant, name: 'Sallys Seashells')
+      create(:merchant, name: 'Billy Bob Bacon')
 
       get "/api/v1/merchants/random"
 
-      merchant_endpoint = JSON.parse(response.body)
+      JSON.parse(response.body)
 
       expect(response).to be_success
     end
@@ -177,7 +178,7 @@ describe "Merchants API" do
       merchant_endpoint = JSON.parse(response.body)
 
       expect(response).to be_success
-      expect(merchant_endpoint).to eq({"revenue"=>"95.0"})
+      expect(merchant_endpoint).to eq("revenue" => "95.0")
     end
 
     it "returns the total revenue for a merchant on a date" do
@@ -196,7 +197,7 @@ describe "Merchants API" do
       merchant_endpoint = JSON.parse(response.body)
 
       expect(response).to be_success
-      expect(merchant_endpoint).to eq({"revenue"=>"20.0"})
+      expect(merchant_endpoint).to eq("revenue" => "20.0")
     end
 
     it "returns the top x merchants ranked by total number of items sold" do
@@ -240,16 +241,16 @@ describe "Merchants API" do
       merchant = create(:merchant)
       invoice1 = create(:invoice, customer: customers.first, merchant: merchant)
       invoice2 = create(:invoice, customer: customers.last, merchant: merchant)
-      transaction1 = create(:transaction, invoice: invoice1, result: "failed")
-      transaction2 = create(:transaction, invoice: invoice1, result: "success")
-      transaction3 = create(:transaction, invoice: invoice2, result: "failed")
-      transaction4 = create(:transaction, invoice: invoice2, result: "failed")
+      create(:transaction, invoice: invoice1, result: "failed")
+      create(:transaction, invoice: invoice1, result: "success")
+      create(:transaction, invoice: invoice2, result: "failed")
+      create(:transaction, invoice: invoice2, result: "failed")
       id = merchant.id
 
       get "/api/v1/merchants/#{id}/customers_with_pending_invoices"
 
       merchant_endpoint = JSON.parse(response.body)
-      
+
       expect(response).to be_success
       expect(merchant_endpoint.count).to eq(1)
       expect(merchant_endpoint.first["first_name"]).to eq(customers.last.first_name)
