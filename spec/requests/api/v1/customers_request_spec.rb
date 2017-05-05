@@ -58,4 +58,34 @@ describe "Customers API" do
     expect(transactions.count).to eq(customer1.transactions.count)
     expect(transactions.first["id"]).to eq(customer1.transactions.first.id)
   end
+
+  it "returns a customers favorite merchant based on successful transactions" do
+    customer = create(:customer)
+    merchant1 = create(:merchant, name: 'Billy Bobs Bacon')
+    merchant2 = create(:merchant, name: 'Sallys Seashells')
+    merchant3 = create(:merchant, name: 'Andys Anchors')
+    invoice1 = create(:invoice, merchant: merchant1, customer: customer)
+    invoice2 = create(:invoice, merchant: merchant2, customer: customer)
+    invoice3 = create(:invoice, merchant: merchant3, customer: customer)
+    invoice4 = create(:invoice, merchant: merchant3, customer: customer)
+    invoice5 = create(:invoice, merchant: merchant2, customer: customer)
+    item1 = create(:item, merchant: merchant1)
+    InvoiceItem.create(invoice: invoice1, item: item1, quantity: 10)
+    InvoiceItem.create(invoice: invoice2, item: item1, quantity: 30)
+    InvoiceItem.create(invoice: invoice3, item: item1, quantity: 40)
+    InvoiceItem.create(invoice: invoice4, item: item1, quantity: 20)
+    InvoiceItem.create(invoice: invoice5, item: item1, quantity: 20)
+    create(:transaction, invoice: invoice1, result: 'success')
+    create(:transaction, invoice: invoice2, result: 'success')
+    create(:transaction, invoice: invoice3, result: 'success')
+    create(:transaction, invoice: invoice4, result: 'success')
+    create(:transaction, invoice: invoice5, result: 'failed')
+    id = customer.id
+
+    get "/api/v1/customers/#{id}/favorite_merchant"
+
+    endpoint_merchant = JSON.parse(response.body)
+
+    expect(endpoint_merchant["name"]).to eq(merchant3.name)
+  end
 end

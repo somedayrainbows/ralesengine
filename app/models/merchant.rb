@@ -21,6 +21,7 @@ class Merchant < ApplicationRecord
       .limit(quantity)
   end
 
+
   def customers_with_pending_invoices
     invoices = Invoice.find_by_sql("SELECT invoices.* FROM invoices
                          INNER JOIN customers ON customers.id = invoices.customer_id

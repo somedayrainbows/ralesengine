@@ -58,4 +58,29 @@ describe "Items API" do
     expect(items.first.merchant).to eq(merchant1)
     expect(items.first.merchant).to_not eq(merchant2)
   end
+
+  it "returns an items best day" do
+    customer1 = create(:customer)
+    merchant1 = create(:merchant, name: 'Billy Bobs Bacon')
+    item1 = create(:item, merchant: merchant1)
+    invoice1 = create(:invoice, created_at: "2000-03-27 14:53:59 UTC", merchant: merchant1, customer: customer1)
+    invoice2 = create(:invoice, created_at: "2001-03-27 14:53:59 UTC", merchant: merchant1, customer: customer1)
+    invoice3 = create(:invoice, created_at: "2002-03-27 14:53:59 UTC", merchant: merchant1, customer: customer1)
+    invoice4 = create(:invoice, created_at: "2003-03-27 14:53:59 UTC", merchant: merchant1, customer: customer1)
+    InvoiceItem.create(invoice: invoice1, item: item1, quantity: 4)
+    InvoiceItem.create(invoice: invoice2, item: item1, quantity: 4)
+    InvoiceItem.create(invoice: invoice3, item: item1, quantity: 1)
+    InvoiceItem.create(invoice: invoice4, item: item1, quantity: 4)
+    create(:transaction, invoice: invoice1, result: 'success')
+    create(:transaction, invoice: invoice2, result: 'success')
+    create(:transaction, invoice: invoice3, result: 'success')
+    create(:transaction, invoice: invoice4, result: 'failed')
+    id = item1.id
+
+    get "/api/v1/items/#{id}/best_day"
+
+    endpoint_day = JSON.parse(response.body)
+
+    expect(endpoint_day["best_day"]).to eq("2001-03-27T14:53:59.000Z")
+  end
 end

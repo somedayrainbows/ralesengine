@@ -34,11 +34,13 @@ Rails.application.routes.draw do
       namespace :customers do
         get '/:id/invoices', to: 'invoices#index', as: 'customer_invoices'
         get '/:id/transactions', to: 'transactions#index', as: 'customer_transactions'
+        get '/:id/favorite_merchant', to: 'favorite_merchant#show'
       end
       resources :customers, only: [:index, :show]
       namespace :items do
         get '/:id/invoice_items', to: 'invoice_items#index', as: 'item_invoice_items'
         get '/:id/merchant', to: 'merchants#show', as: 'item_merchant'
+        get '/:id/best_day', to: 'best_day#show'
       end
       resources :items, only: [:index, :show]
       namespace :invoice_items do
