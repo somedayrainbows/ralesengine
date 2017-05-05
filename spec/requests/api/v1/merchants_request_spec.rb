@@ -333,5 +333,6 @@ describe "Merchants API" do
 
       expect(response).to be_success
       expect(merchant_endpoint).to eq("revenue" => "20.0")
+    end
   end
 end

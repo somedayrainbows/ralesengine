@@ -46,6 +46,7 @@ class Merchant < ApplicationRecord
              .group(:id)
              .order("succ_transactions DESC")
              .first
+   end
 
   def self.revenue(hash = nil)
     total = self.joins(invoices: [:invoice_items, :transactions])
