@@ -1,5 +1,6 @@
 # README
 
+* In this project, we used Rails and ActiveRecord to build a JSON API which exposes the SalesEngine data schema.
 * Ruby version 5, PostgreSQL
 
 ### Let's go!
@@ -14,11 +15,12 @@ Go to your terminal, then:
   * Then, run, `rake db:migrate` to set up the database according to our schema.
   * Finally, run `rake data:import` to load the seed data into the database.
 
-### RSpec test suite
+### RSpec test suite and Checking Coverage with SimpleCov
 
 Start by running our test suite.
 
   * Enter `rspec` on the command line to run the test suite.
+  * Next, enter `open coverage/index.html` on the command line to see test coverage.
 
 ### Running the server locally
 
