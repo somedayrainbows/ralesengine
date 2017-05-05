@@ -31,31 +31,31 @@ Start by running our test suite.
 
 ### Record Endpoints
 
-There are six tables of data in this project: merchants, customers, items, invoices, invoice_items, and transactions. Each can be accessed from the following end points in index form or individually using the record's unique id.
+There are six tables of data in this project: merchants, customers, items, invoices, invoice_items, and transactions. Each can be accessed from the following index endpoints or individually using the record's unique id.
 
   * merchants
     `GET /api/v1/merchants/`
     `GET /api/v1/merchants/1`
 
   * customers
-    `GET /api/v1/merchants/`
-    `GET /api/v1/merchants/1`
+    `GET /api/v1/customers/`
+    `GET /api/v1/customers/1`
 
   * items
-    `GET /api/v1/merchants/`
-    `GET /api/v1/merchants/1`
+    `GET /api/v1/items/`
+    `GET /api/v1/items/1`
 
-  * invoices
-    `GET /api/v1/merchants/`
-    `GET /api/v1/merchants/1`
+  * items
+    `GET /api/v1/items/`
+    `GET /api/v1/items/1`
 
   * invoice_items
-    `GET /api/v1/merchants/`
-    `GET /api/v1/merchants/1`
+    `GET /api/v1/invoice_items/`
+    `GET /api/v1/invoice_items/1`
 
   * transactions
-    `GET /api/v1/merchants/`
-    `GET /api/v1/merchants/1`
+    `GET /api/v1/transactions/`
+    `GET /api/v1/transactions/1`
 
 Additionally, you can use our single and multi-finder methods to return results using any of a model's attributes. You can also use the random finder method to generate a random row from one of the tables.
 
