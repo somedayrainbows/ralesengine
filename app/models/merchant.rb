@@ -40,4 +40,12 @@ class Merchant < ApplicationRecord
     select("merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) AS revenue").joins(invoices: [:invoice_items, :transactions]).where(transactions: {result: 'success'}).group(:id).order('revenue DESC').limit(limit)
   end
 
+  def favorite_customer
+    customers.select("customers.*, transactions.count AS succ_transactions")
+             .joins(invoices: :transactions)
+             .where(transactions: { result: 'success' })
+             .group(:id)
+             .order("succ_transactions DESC")
+             .first
+  end
 end

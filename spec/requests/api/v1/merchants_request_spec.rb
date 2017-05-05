@@ -112,7 +112,7 @@ describe "Merchants API" do
                                     created_at: "2000-03-27 14:53:59 UTC",
                                     updated_at: "2032-03-27 14:53:59 UTC")
     end
-    
+
     it "returns a collection of merchants based on an id" do
       get "/api/v1/merchants/find_all?id=#{@merchant1.id}"
 
@@ -285,6 +285,34 @@ describe "Merchants API" do
       expect(merchant_endpoint.first['name']).to eq(merchant3.name)
       expect(merchant_endpoint.second['name']).to eq(merchant2.name)
       expect(merchant_endpoint.third['name']).to eq(merchant1.name)
+    end
+
+    it "returns a merchants favorite customer based on successful transactions" do
+      customers = create_list(:customer, 5)
+      merchant = create(:merchant, name: 'Billy Bobs Bacon')
+      invoice1 = create(:invoice, merchant: merchant, customer: customers[0])
+      invoice2 = create(:invoice, merchant: merchant, customer: customers[1])
+      invoice3 = create(:invoice, merchant: merchant, customer: customers[2])
+      invoice4 = create(:invoice, merchant: merchant, customer: customers[3])
+      invoice5 = create(:invoice, merchant: merchant, customer: customers[4])
+      item1 = create(:item, merchant: merchant)
+      InvoiceItem.create(invoice: invoice1, item: item1, quantity: 40)
+      InvoiceItem.create(invoice: invoice2, item: item1, quantity: 30)
+      InvoiceItem.create(invoice: invoice3, item: item1, quantity: 10)
+      InvoiceItem.create(invoice: invoice4, item: item1, quantity: 20)
+      InvoiceItem.create(invoice: invoice5, item: item1, quantity: 40)
+      create(:transaction, invoice: invoice1, result: 'success')
+      create(:transaction, invoice: invoice2, result: 'success')
+      create(:transaction, invoice: invoice3, result: 'success')
+      create(:transaction, invoice: invoice4, result: 'success')
+      create(:transaction, invoice: invoice5, result: 'failed')
+      id = merchant.id
+
+      get "/api/v1/merchants/#{id}/favorite_customer"
+
+      endpoint_customer = JSON.parse(response.body)
+
+      expect(endpoint_customer["first_name"]).to eq(customers[0].first_name)
     end
   end
 end
