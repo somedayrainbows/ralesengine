@@ -314,5 +314,24 @@ describe "Merchants API" do
 
       expect(endpoint_customer["first_name"]).to eq(customers[0].first_name)
     end
+
+     it "returns the total revenue for date x across all merchants" do
+      customer = create(:customer)
+      merchant = create(:merchant, name: 'Billy Bob Bacon')
+      invoice1 = create(:invoice, merchant: merchant, customer: customer, created_at: '2012-03-16 11:55:05')
+      invoice2 = create(:invoice, merchant: merchant, customer: customer, created_at: '2012-03-15 11:55:05')
+      items = create_list(:item, 2, merchant: merchant)
+      InvoiceItem.create(invoice: invoice1, item: items.first, unit_price: 1000, quantity: 2)
+      InvoiceItem.create(invoice: invoice2, item: items.second, unit_price: 2500, quantity: 3)
+      InvoiceItem.create(invoice: invoice2, item: items.second, unit_price: 2500, quantity: 3)
+      create(:transaction, invoice: invoice1)
+      create(:transaction, invoice: invoice2)
+
+      get "/api/v1/merchants/revenue?date='2012-03-16 11:55:05'"
+
+      merchant_endpoint = JSON.parse(response.body)
+
+      expect(response).to be_success
+      expect(merchant_endpoint).to eq("revenue" => "20.0")
   end
 end

@@ -21,7 +21,6 @@ class Merchant < ApplicationRecord
       .limit(quantity)
   end
 
-
   def customers_with_pending_invoices
     invoices = Invoice.find_by_sql("SELECT invoices.* FROM invoices
                          INNER JOIN customers ON customers.id = invoices.customer_id
@@ -47,5 +46,13 @@ class Merchant < ApplicationRecord
              .group(:id)
              .order("succ_transactions DESC")
              .first
+
+  def self.revenue(hash = nil)
+    total = self.joins(invoices: [:invoice_items, :transactions])
+            .where(transactions: {result: 'success'})
+            .where(invoices: hash)
+            .sum('invoice_items.unit_price * invoice_items.quantity')
+
+    (total.to_f / 100).to_s
   end
 end
