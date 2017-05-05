@@ -118,4 +118,36 @@ describe "Items API" do
       expect(endpoint_items.fourth['items_sold']).to eq(20)
     end
   end
+
+  it "returns top x items ranked by revenue" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    invoice1 = create(:invoice, merchant: merchant, customer: customer)
+    invoice2 = create(:invoice, merchant: merchant, customer: customer)
+    invoice3 = create(:invoice, merchant: merchant, customer: customer)
+    invoice4 = create(:invoice, merchant: merchant, customer: customer)
+    item1 = create(:item, merchant: merchant)
+    item2 = create(:item, merchant: merchant)
+    item3 = create(:item, merchant: merchant)
+    item4 = create(:item, merchant: merchant)
+    InvoiceItem.create!(invoice: invoice1, item: item1, quantity: 5, unit_price: 345)
+    InvoiceItem.create!(invoice: invoice2, item: item2, quantity: 10, unit_price: 345)
+    InvoiceItem.create!(invoice: invoice3, item: item3, quantity: 45, unit_price: 345)
+    InvoiceItem.create!(invoice: invoice4, item: item4, quantity: 2, unit_price: 345)
+    create(:transaction, invoice: invoice1)
+    create(:transaction, invoice: invoice2)
+    create(:transaction, invoice: invoice3)
+    create(:transaction, invoice: invoice4)
+
+    get "/api/v1/items/most_revenue?quantity=5"
+
+    item_endpoint = JSON.parse(response.body)
+    expect(response).to be_success
+    expect(item_endpoint.count).to eq(4)
+    expect(item_endpoint.first['name']).to eq(item3.name)
+    expect(item_endpoint.second['name']).to eq(item2.name)
+    expect(item_endpoint.third['name']).to eq(item1.name)
+
+
+  end
 end
