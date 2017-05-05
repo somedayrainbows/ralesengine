@@ -287,7 +287,35 @@ describe "Merchants API" do
       expect(merchant_endpoint.third['name']).to eq(merchant1.name)
     end
 
-    it "returns the total revenue for date x across all merchants" do
+    it "returns a merchants favorite customer based on successful transactions" do
+      customers = create_list(:customer, 5)
+      merchant = create(:merchant, name: 'Billy Bobs Bacon')
+      invoice1 = create(:invoice, merchant: merchant, customer: customers[0])
+      invoice2 = create(:invoice, merchant: merchant, customer: customers[1])
+      invoice3 = create(:invoice, merchant: merchant, customer: customers[2])
+      invoice4 = create(:invoice, merchant: merchant, customer: customers[3])
+      invoice5 = create(:invoice, merchant: merchant, customer: customers[4])
+      item1 = create(:item, merchant: merchant)
+      InvoiceItem.create(invoice: invoice1, item: item1, quantity: 40)
+      InvoiceItem.create(invoice: invoice2, item: item1, quantity: 30)
+      InvoiceItem.create(invoice: invoice3, item: item1, quantity: 10)
+      InvoiceItem.create(invoice: invoice4, item: item1, quantity: 20)
+      InvoiceItem.create(invoice: invoice5, item: item1, quantity: 40)
+      create(:transaction, invoice: invoice1, result: 'success')
+      create(:transaction, invoice: invoice2, result: 'success')
+      create(:transaction, invoice: invoice3, result: 'success')
+      create(:transaction, invoice: invoice4, result: 'success')
+      create(:transaction, invoice: invoice5, result: 'failed')
+      id = merchant.id
+
+      get "/api/v1/merchants/#{id}/favorite_customer"
+
+      endpoint_customer = JSON.parse(response.body)
+
+      expect(endpoint_customer["first_name"]).to eq(customers[0].first_name)
+    end
+
+     it "returns the total revenue for date x across all merchants" do
       customer = create(:customer)
       merchant = create(:merchant, name: 'Billy Bob Bacon')
       invoice1 = create(:invoice, merchant: merchant, customer: customer, created_at: '2012-03-16 11:55:05')
@@ -305,6 +333,5 @@ describe "Merchants API" do
 
       expect(response).to be_success
       expect(merchant_endpoint).to eq("revenue" => "20.0")
-    end
   end
 end
