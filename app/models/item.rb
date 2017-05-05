@@ -14,6 +14,14 @@ class Item < ApplicationRecord
     {best_day: day}
   end
 
+  def self.most_items(quantity = 5)
+    select("items.*, sum(invoice_items.quantity) AS items_sold")
+      .joins(invoice_items: [invoice: :transactions])
+      .where(transactions: { result: 'success' })
+      .group(:id)
+      .order("items_sold DESC")
+      .limit(quantity)
+
   def self.most_revenue(limit = 5)
     select("items.*, sum(invoice_items.quantity * invoice_items.unit_price) AS revenue")
       .joins(invoices: [:invoice_items, :transactions])

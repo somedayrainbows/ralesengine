@@ -5,13 +5,13 @@ Rails.application.routes.draw do
       namespace :merchants do
         get '/:id/items', to: 'items#index', as: 'merchant_items'
         get '/:id/invoices', to: 'invoices#index', as: 'merchant_invoices'
-        get 'find', to: 'finder#show'
-        get 'find_all', to: 'finder#index'
-        get 'random', to: 'random#show'
+        get '/find', to: 'finder#show'
+        get '/find_all', to: 'finder#index'
+        get '/random', to: 'random#show'
         get '/:id/revenue', to: 'revenue#show'
-        get 'most_items', to: 'most_items#index'
+        get '/most_items', to: 'most_items#index'
         get '/:id/customers_with_pending_invoices', to: 'customers#index'
-        get 'most_revenue', to: 'most_revenue#index'
+        get '/most_revenue', to: 'most_revenue#index'
       end
       resources :merchants, only: [:index, :show]
       namespace :invoices do
@@ -20,16 +20,16 @@ Rails.application.routes.draw do
         get '/:id/items', to: 'items#index', as: 'items'
         get '/:id/customer', to: 'customers#show', as: 'customer'
         get '/:id/merchant', to: 'merchants#show', as: 'merchant'
-        get 'find', to: 'finder#show'
-        get 'find_all', to: 'finder#index'
-        get 'random', to: 'random#show'
+        get '/find', to: 'finder#show'
+        get '/find_all', to: 'finder#index'
+        get '/random', to: 'random#show'
       end
       resources :invoices, only: [:index, :show]
       namespace :transactions do
         get '/:id/invoice', to: 'invoices#show', as: 'transaction_invoice'
-        get 'find', to: 'finder#show'
-        get 'find_all', to: 'finder#index'
-        get 'random', to: 'random#show'
+        get '/find', to: 'finder#show'
+        get '/find_all', to: 'finder#index'
+        get '/random', to: 'random#show'
       end
       resources :transactions, only: [:index, :show]
       namespace :customers do
@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         get '/:id/invoice_items', to: 'invoice_items#index', as: 'item_invoice_items'
         get '/:id/merchant', to: 'merchants#show', as: 'item_merchant'
         get '/:id/best_day', to: 'best_day#show'
+        get '/most_items', to: 'most_items#index'
         get '/most_revenue', to: 'most_revenue#index'
       end
       resources :items, only: [:index, :show]
