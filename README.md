@@ -1,6 +1,6 @@
 # README
 
-* In this project, we used Rails and ActiveRecord to build a JSON API which exposes the SalesEngine data schema.
+* In this project, we used Rails and ActiveRecord to build a JSON API that exposes the SalesEngine data schema.
 * Rails version 5, PostgreSQL
 
 ### Let's go!
