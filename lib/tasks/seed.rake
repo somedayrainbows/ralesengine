@@ -1,7 +1,6 @@
 require 'csv'
 require 'database_cleaner'
 
-
 namespace :seed do
   desc "import all csv data"
   task all: :environment do
