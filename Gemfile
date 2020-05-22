@@ -7,7 +7,7 @@ end
 
 gem 'rails', '~> 5.0.2'
 gem 'pg', '~> 0.18'
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.12'
 gem 'simplecov', :require => false, :group => :test
 
 group :development, :test do
